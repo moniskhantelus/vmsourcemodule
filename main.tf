@@ -30,7 +30,7 @@ data "google_compute_zones" "available" {
 resource "google_compute_instance_from_template" "compute_instance" {
   provider            = google
   count               = local.num_instances
-  name                = var.add_hostname_suffix ? format("%s%s%s", local.hostname, var.hostname_suffix_separator, format("%03d", count.index + 1)) : local.hostname
+  name                = var.hostname//var.add_hostname_suffix ? format("%s%s%s", local.hostname, var.hostname_suffix_separator, format("%03d", count.index + 1)) : local.hostname
   project             = local.project_id
   zone                = var.zone == null ? data.google_compute_zones.available.names[count.index % length(data.google_compute_zones.available.names)] : var.zone
   deletion_protection = var.deletion_protection
@@ -83,9 +83,9 @@ resource "google_compute_instance_from_template" "compute_instance" {
 #########
 
 locals {
-  source_image         = var.source_image != "" ? var.source_image : "debian-11-bullseye-v20240515"
-  source_image_family  = var.source_image_family != "" ? var.source_image_family : "debian-11"
-  source_image_project = var.source_image_project != "" ? var.source_image_project : "debian-cloud"
+  source_image         = "${var.source_image}"  //!= "" //? var.source_image : "debian-11-bullseye-v20240515"
+  source_image_family  = "${var.source_image_family}" //!= "" ? var.source_image_family : "debian-11"
+  source_image_project = "${var.source_image_project}" //!= "" ? var.source_image_project : "debian-cloud"
 
   boot_disk = [
     {
@@ -128,7 +128,7 @@ locals {
 ####################
 resource "google_compute_instance_template" "tpl" {
   provider                = google-beta
-  name_prefix             = "${var.name_prefix}-"
+  name_prefix             = "${var.name_prefix}"
   project                 = var.project_id
   machine_type            = var.machine_type
   labels                  = var.labels
