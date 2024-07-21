@@ -30,7 +30,7 @@ data "google_compute_zones" "available" {
 resource "google_compute_instance_from_template" "compute_instance" {
   provider            = google
   count               = local.num_instances
-  name                = var.hostname//var.add_hostname_suffix ? format("%s%s%s", local.hostname, var.hostname_suffix_separator, format("%03d", count.index + 1)) : local.hostname
+  name                = local.hostname //var.add_hostname_suffix ? format("%s%s%s", local.hostname, var.hostname_suffix_separator, format("%03d", count.index + 1)) : local.hostname
   project             = local.project_id
   zone                = var.zone == null ? data.google_compute_zones.available.names[count.index % length(data.google_compute_zones.available.names)] : var.zone
   deletion_protection = var.deletion_protection
@@ -75,7 +75,7 @@ resource "google_compute_instance_from_template" "compute_instance" {
     }
   }
 
-  source_instance_template = var.instance_template
+ source_instance_template = var.instance_template
 }
 
 #########
@@ -164,7 +164,6 @@ resource "google_compute_instance_template" "tpl" {
       }
     }
   }
-
   dynamic "service_account" {
     for_each = var.service_account == null ? [] : [var.service_account]
     content {
